@@ -54,7 +54,7 @@ cv::Mat& ImageCollections::findNearest(cv::Mat& color) {
         unsigned int dist = 0;
         cv::Mat& targetColor = images[index]->colorInfo;
 
-        int length = color.rows * color.step;
+        int length = 3 * 3 * 3;
         for(int i = 0; i < length; ++i) {
             int diff = color.data[i] - targetColor.data[i];
             dist += diff * diff;
