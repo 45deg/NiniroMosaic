@@ -41,29 +41,45 @@ struct Tile {
     }
 };
 
-std::vector<std::string> getListOfFiles(std::string dirname){
-    std::vector<std::string> files;
+class ImageCollections {
+private:
+    std::vector<std::shared_ptr<Tile> > images;
 
-    DIR* dp = opendir(dirname.c_str());
-    if (dp != NULL)
-    {
-        struct dirent* dent;
-        while((dent = readdir(dp)) != NULL){
-            // skip hidden file
-            if(dent->d_name[0] == '.')
-                continue;
-            files.push_back(std::string(dent->d_name));
+public:
+    ImageCollections(std::string dirName){
+        std::vector<std::string> files = getListOfFiles(dirName);
+
+        for (auto&& file : files) {
+            images.push_back(std::make_shared<Tile>(file));
         }
-        closedir(dp);
     }
 
-    return files;
-}
+private:
+    std::vector<std::string> getListOfFiles(std::string dirName){
+        std::vector<std::string> files;
+
+        DIR* dp = opendir(dirName.c_str());
+        std::string prefix = dirName + "/";
+        if (dp != NULL)
+        {
+            struct dirent* dent;
+            while((dent = readdir(dp)) != NULL){
+                // skip hidden file
+                if(dent->d_name[0] == '.')
+                    continue;
+                files.push_back(prefix + std::string(dent->d_name));
+            }
+            closedir(dp);
+        }
+
+        return files;
+    }
+};
 
 
 int main(int argc, char const* argv[])
 {
     using namespace std;
 
-    Tile t("./image/100464909.PNG");
+    ImageCollections imgs("image");
 }
