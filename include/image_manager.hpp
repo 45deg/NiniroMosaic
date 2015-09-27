@@ -1,6 +1,7 @@
 #ifndef __IMAGE_MANAGER_HPP
 #define __IMAGE_MANAGER_HPP
 
+#include <memory>
 #include <iostream>
 #include <dirent.h>
 #include <sys/types.h>
