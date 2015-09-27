@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include "opencv2/opencv.hpp"
 #include <vector>
+#include <climits>
 
 struct Tile {
     cv::Mat image;
@@ -54,6 +55,28 @@ public:
         }
     }
 
+    cv::Mat& findNearest(cv::Mat& color) {
+        unsigned int distMin = UINT_MAX;
+        int argMin = -1;
+        for (int index = 0; index < images.size(); index++) {
+            unsigned int dist = 0;
+            cv::Mat& targetColor = images[index]->colorInfo;
+
+            int length = color.rows * color.step;
+            for(int i = 0; i < length; ++i) {
+                int diff = color.data[i] - targetColor.data[i];
+                dist += diff * diff;
+            }
+
+            if (dist < distMin){
+                distMin = dist;
+                argMin = index;
+            }
+        }
+
+        return images[argMin]->image;
+    }
+
 private:
     std::vector<std::string> getListOfFiles(std::string dirName){
         std::vector<std::string> files;
@@ -82,4 +105,8 @@ int main(int argc, char const* argv[])
     using namespace std;
 
     ImageCollections imgs("image");
+    Tile tim("./image/2286073910.png");
+
+    cv::Mat& timImage = imgs.findNearest(tim.colorInfo);
+    cv::imwrite("tim.png", timImage);
 }
