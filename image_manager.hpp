@@ -1,0 +1,30 @@
+#ifndef __IMAGE_MANAGER_HPP
+#define __IMAGE_MANAGER_HPP
+
+#include <iostream>
+#include <dirent.h>
+#include <sys/types.h>
+#include "opencv2/opencv.hpp"
+#include <vector>
+#include <climits>
+
+struct Tile {
+    cv::Mat image;
+    cv::Mat colorInfo;
+
+    Tile(std::string);
+};
+
+class ImageCollections {
+private:
+    std::vector<std::shared_ptr<Tile> > images;
+
+public:
+    ImageCollections(std::string);
+    cv::Mat& findNearest(cv::Mat& color);
+
+private:
+    std::vector<std::string> getListOfFiles(std::string dirName);
+};
+
+#endif
