@@ -1,8 +1,9 @@
-image/*
+bin/image/*
 
 ### C++ ###
 a.out
 *.o
+*.d
 
 ### OSX ###
 .DS_Store
