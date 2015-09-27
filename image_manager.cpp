@@ -98,15 +98,3 @@ private:
         return files;
     }
 };
-
-
-int main(int argc, char const* argv[])
-{
-    using namespace std;
-
-    ImageCollections imgs("image");
-    Tile tim("./image/2286073910.png");
-
-    cv::Mat& timImage = imgs.findNearest(tim.colorInfo);
-    cv::imwrite("tim.png", timImage);
-}
