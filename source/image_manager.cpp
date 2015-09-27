@@ -9,6 +9,7 @@
 
 Tile::Tile(std::string filename){
     image = cv::imread(filename, 1);
+
     colorInfo = cv::Mat(3, 3, CV_8UC3);
 
     int cropWidth = image.cols / 3;
@@ -36,14 +37,16 @@ Tile::Tile(std::string filename){
         }
     }
 
-    std::cout << cv::format(colorInfo, "python") << std::endl;
+    std::cout << "Type:" << image.type() << ' ' << cv::format(colorInfo, "python") << std::endl;
 }
 
 ImageCollections::ImageCollections(std::string dirName){
     std::vector<std::string> files = getListOfFiles(dirName);
 
     for (auto&& file : files) {
-        images.push_back(std::make_shared<Tile>(file));
+        auto tile = std::make_shared<Tile>(file);
+        if(tile->image.data != NULL)
+            images.push_back(tile);
     }
 }
 
