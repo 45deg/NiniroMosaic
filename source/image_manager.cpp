@@ -8,8 +8,8 @@
 #include <climits>
 
 Tile::Tile(std::string filename){
-    image = cv::imread(filename);
-    colorInfo = cv::Mat(3, 3, image.type());
+    image = cv::imread(filename, 1);
+    colorInfo = cv::Mat(3, 3, CV_8UC3);
 
     int cropWidth = image.cols / 3;
     int cropHeight = image.rows / 3;
