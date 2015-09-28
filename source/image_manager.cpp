@@ -37,7 +37,7 @@ Tile::Tile(std::string filename){
         }
     }
 
-    std::cout << "Type:" << image.type() << ' ' << cv::format(colorInfo, "python") << std::endl;
+    // std::cout << "Type:" << image.type() << ' ' << cv::format(colorInfo, "python") << std::endl;
 }
 
 ImageCollections::ImageCollections(std::string dirName){
