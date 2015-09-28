@@ -29,23 +29,30 @@ void changeHSV(cv::Mat& image, double hFactor, double sFactor, double vFactor){
     cv::cvtColor(hsvImage, image, CV_HSV2BGR);
 }
 
+void equalizeHistgram(cv::Mat& image){
+    std::vector<cv::Mat> planes;
+    cv::Mat imgHistEqualized;
+    cv::cvtColor(image, imgHistEqualized, CV_BGR2YCrCb);
+    cv::split(imgHistEqualized, planes);
+
+    cv::equalizeHist(planes[0], planes[0]);
+
+    cv::merge(planes, imgHistEqualized);
+    cv::cvtColor(imgHistEqualized, image, CV_YCrCb2BGR);
+}
+
 int main(int argc, char const* argv[])
 {
     cv::VideoCapture cap(0);
     cv::Mat frame;
     cv::Mat frameRefined;
-    int widthTile = 100;
-    int heightTile = 60;
+    int widthTile = 16*4;
+    int heightTile = 9*4;
     int tileSize = 24;
 
     cv::Mat masterImage(cv::Size(widthTile * 3, heightTile * 3), CV_8UC3);
     cv::Mat outputImage(cv::Size(widthTile * tileSize, heightTile * tileSize), CV_8UC3);
     ImageCollections imageCollections("image");
-
-    cv::Mat gammaLUT = createGammaLUT(std::stof(std::string(argv[1])));
-    double hf = std::stof(std::string(argv[2]));
-    double sf = std::stof(std::string(argv[3]));
-    double vf = std::stof(std::string(argv[4]));
 
     int tickCount = 0;
     auto startTime = std::chrono::system_clock::now();
@@ -56,13 +63,18 @@ int main(int argc, char const* argv[])
         std::cout << std::fixed << "fps: " << fps << std::endl;
 
         cap >> frame;
-        changeHSV(frame, hf, sf, vf);
-        cv::LUT(frame, gammaLUT, frameRefined);
+/*
+        cv::resize(frame, masterImage, masterImage.size());
+        cv::imshow("master2", masterImage);
+*/
+
+        equalizeHistgram(frame);
+        // changeHSV(frame, hf, sf, vf);
+        // cv::LUT(frame, gammaLUT, frameRefined);
         //frame = cv::imread("/Users/kazuhiro/Pictures/screenshots/a.png");
         // frame = cv::imread("/Users/kazuhiro/sandbox/4646fa4bc5109.jpg");
 
-
-        cv::resize(frameRefined, masterImage, masterImage.size());
+        cv::resize(frame, masterImage, masterImage.size());
 
         for(int i = 0; i < heightTile; ++i){
             for(int j = 0; j < widthTile; ++j){
