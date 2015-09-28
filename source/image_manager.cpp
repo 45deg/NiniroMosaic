@@ -59,8 +59,7 @@ ImageCollections::ImageCollections(std::string dirName){
 }
 
 cv::Mat& ImageCollections::findNearest(cv::Mat& color) {
-    cv::Mat query;
-    color.reshape(1, 1).convertTo(query, CV_32FC1);
+    cv::Mat query = color.reshape(1, 1);
     cv::Mat index;
     cv::Mat dist;
     kdtree->knnSearch(query, index, dist, 1);
