@@ -45,31 +45,27 @@ ImageCollections::ImageCollections(std::string dirName){
 
     for (auto&& file : files) {
         auto tile = std::make_shared<Tile>(file);
-        if(tile->image.data != NULL)
+        if(tile->image.data != NULL) {
             images.push_back(tile);
+        }
     }
+
+    cv::Mat featureMat(images.size(), 27, CV_32FC1);
+    for(int i = 0; i < images.size(); ++i){
+        images[i]->colorInfo.reshape(1, 1).copyTo(featureMat.row(i));
+    }
+
+    kdtree = std::make_shared<cv::flann::Index>(featureMat, cv::flann::KDTreeIndexParams(4));
 }
 
 cv::Mat& ImageCollections::findNearest(cv::Mat& color) {
-    unsigned int distMin = UINT_MAX;
-    int argMin = -1;
-    for (int index = 0; index < images.size(); index++) {
-        unsigned int dist = 0;
-        cv::Mat& targetColor = images[index]->colorInfo;
+    cv::Mat query;
+    color.reshape(1, 1).convertTo(query, CV_32FC1);
+    cv::Mat index;
+    cv::Mat dist;
+    kdtree->knnSearch(query, index, dist, 1);
 
-        int length = 3 * 3 * 3;
-        for(int i = 0; i < length; ++i) {
-            int diff = color.data[i] - targetColor.data[i];
-            dist += diff * diff;
-        }
-
-        if (dist < distMin){
-            distMin = dist;
-            argMin = index;
-        }
-    }
-
-    return images[argMin]->image;
+    return images[index.at<int>(0,0)]->image;
 }
 
 std::vector<std::string> ImageCollections::getListOfFiles(std::string dirName){
