@@ -47,6 +47,9 @@ int main(int argc, char const* argv[])
                 cv::Mat croppedTmp = masterImage(cv::Rect(j*3, i*3, 3, 3));
                 cv::Mat cropped;
                 croppedTmp.convertTo(cropped, CV_32FC3);
+                
+                cropped *= 1./256;
+                cv::cvtColor(cropped, cropped, CV_BGR2Lab);
 
                 cv::Mat& nearestChip = imageCollections.findNearest(cropped);
                 nearestChip.copyTo(outputImage(cv::Rect(j*tileSize, i*tileSize, tileSize, tileSize)));
