@@ -67,7 +67,9 @@ cv::Mat& ImageCollections::findNearest(cv::Mat& color) {
     cv::Mat query = color.reshape(1, 1);
     cv::Mat index;
     cv::Mat dist;
-    kdtree->knnSearch(query, index, dist, 1);
+    static auto searchParams = cv::flann::SearchParams(32);
+    
+    kdtree->knnSearch(query, index, dist, 1, searchParams);
 
     return images[index.at<int>(0,0)]->image;
 }
