@@ -19,6 +19,7 @@ struct Tile {
 class ImageCollections {
 private:
     std::vector<std::shared_ptr<Tile> > images;
+    std::shared_ptr<cv::flann::Index> kdtree;
 
 public:
     ImageCollections(std::string);
