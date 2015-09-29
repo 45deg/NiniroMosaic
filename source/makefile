@@ -1,5 +1,7 @@
 COMPILER = g++
-CFLAGS   = --std=c++11 -g -MMD -MP -Wall -Wextra -Winit-self -Wno-unused-parameter -Wfloat-equal
+CFLAGS   = --std=c++11 -MMD -MP
+CFLAGS_DEBUG   = -g -Wall -Wextra -Winit-self -Wno-unused-parameter -Wfloat-equal
+CFLAGS_RELEASE   = -O3
 LDFLAGS  = $(shell pkg-config --libs opencv)
 LIBS     = 
 INCLUDE  = -I../include $(shell pkg-config --cflags opencv)
@@ -18,6 +20,12 @@ $(TARGET): $(OBJECTS) $(LIBS)
 $(OBJDIR)/%.o: %.cpp
 	@[ -d $(OBJDIR) ] || mkdir -p $(OBJDIR)
 	$(COMPILER) $(CFLAGS) $(INCLUDE) -o $@ -c $<
+
+debug: CFLAGS+=$(CFLAGS_DEBUG)
+debug: all
+
+release: CFLAGS+=$(CFLAGS_RELEASE)
+release: all
 
 all: clean $(TARGET)
 
