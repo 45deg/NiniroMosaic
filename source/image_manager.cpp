@@ -53,9 +53,8 @@ ImageCollections::ImageCollections(std::string dirName){
     cv::Mat featureMat(images.size(), 27, CV_32FC1);
     for(int i = 0; i < images.size(); ++i){
         cv::Mat lab;
-        images[i]->colorInfo.convertTo(lab, CV_32FC3);
+        images[i]->colorInfo.convertTo(lab, CV_32FC3, 1./256);
 
-        lab *= 1./256;
         cv::cvtColor(lab, lab, CV_BGR2Lab);
 
         lab.reshape(1,1).copyTo(featureMat.row(i));
