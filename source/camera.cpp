@@ -22,8 +22,8 @@ int main(int argc, char const* argv[])
     cv::VideoCapture cap(0);
     cv::Mat frame;
     cv::Mat frameRefined;
-    int widthTile = 16*4;
-    int heightTile = 9*4;
+    int widthTile = 100;
+    int heightTile = 60;
     int tileSize = 24;
 
     cv::Mat masterImage(cv::Size(widthTile * 3, heightTile * 3), CV_32FC3);
@@ -39,8 +39,9 @@ int main(int argc, char const* argv[])
         std::cout << std::fixed << "fps: " << fps << std::endl;
 
         cap >> frame;
+        frame = cv::imread("/Users/kazuhiro/Desktop/kin-iro-mosaic0003.jpg");
         cv::resize(frame, masterImage, masterImage.size());
-        equalizeHistgram(masterImage);
+        // equalizeHistgram(masterImage);
 
         for(int i = 0; i < heightTile; ++i){
             for(int j = 0; j < widthTile; ++j){
