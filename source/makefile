@@ -1,7 +1,7 @@
 COMPILER = g++
 CFLAGS   = --std=c++11 -MMD -MP
 CFLAGS_DEBUG   = -g -Wall -Wextra -Winit-self -Wno-unused-parameter -Wfloat-equal
-CFLAGS_RELEASE   = -O3 
+CFLAGS_RELEASE   = -O3
 LDFLAGS  = $(shell pkg-config --libs opencv)
 LIBS     = 
 INCLUDE  = -I../include $(shell pkg-config --cflags opencv)
