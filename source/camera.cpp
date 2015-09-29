@@ -26,7 +26,10 @@ int main(int argc, char const* argv[])
     int heightTile = 60;
     int tileSize = 24;
 
-    cv::Mat masterImage(cv::Size(widthTile * 3, heightTile * 3), CV_32FC3);
+    const cv::Size masterSize = cv::Size(widthTile * 3, heightTile * 3);
+        
+    cv::Mat resizedFrame(masterSize, CV_8UC3);
+    cv::Mat masterImage(masterSize, CV_32FC3);
     cv::Mat outputImage(cv::Size(widthTile * tileSize, heightTile * tileSize), CV_8UC3);
     ImageCollections imageCollections("image");
 
@@ -39,24 +42,22 @@ int main(int argc, char const* argv[])
         std::cout << std::fixed << "fps: " << fps << std::endl;
 
         cap >> frame;
-        cv::resize(frame, masterImage, masterImage.size());
-        equalizeHistgram(masterImage);
+        cv::resize(frame, resizedFrame, masterSize);
+        equalizeHistgram(resizedFrame);
+        resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
+        cv::cvtColor(masterImage, masterImage, CV_BGR2Lab);
 
         for(int i = 0; i < heightTile; ++i){
             for(int j = 0; j < widthTile; ++j){
-                cv::Mat croppedTmp = masterImage(cv::Rect(j*3, i*3, 3, 3));
-                cv::Mat cropped;
-                croppedTmp.convertTo(cropped, CV_32FC3);
-                
-                cropped *= 1./256;
-                cv::cvtColor(cropped, cropped, CV_BGR2Lab);
+                cv::Mat cropped = masterImage(cv::Rect(j*3, i*3, 3, 3)).clone();
 
                 cv::Mat& nearestChip = imageCollections.findNearest(cropped);
                 nearestChip.copyTo(outputImage(cv::Rect(j*tileSize, i*tileSize, tileSize, tileSize)));
             }
         }
+
         cv::imshow("sample", outputImage);
-        cv::imshow("master", masterImage);
+        cv::imshow("master", resizedFrame);
     }
 
     return 0;
