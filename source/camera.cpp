@@ -39,15 +39,17 @@ int main(int argc, char const* argv[])
         std::cout << std::fixed << "fps: " << fps << std::endl;
 
         cap >> frame;
-        frame = cv::imread("/Users/kazuhiro/Desktop/kin-iro-mosaic0003.jpg");
         cv::resize(frame, masterImage, masterImage.size());
-        // equalizeHistgram(masterImage);
+        equalizeHistgram(masterImage);
 
         for(int i = 0; i < heightTile; ++i){
             for(int j = 0; j < widthTile; ++j){
                 cv::Mat croppedTmp = masterImage(cv::Rect(j*3, i*3, 3, 3));
                 cv::Mat cropped;
                 croppedTmp.convertTo(cropped, CV_32FC3);
+                
+                cropped *= 1./256;
+                cv::cvtColor(cropped, cropped, CV_BGR2Lab);
 
                 cv::Mat& nearestChip = imageCollections.findNearest(cropped);
                 nearestChip.copyTo(outputImage(cv::Rect(j*tileSize, i*tileSize, tileSize, tileSize)));

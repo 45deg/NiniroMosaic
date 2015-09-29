@@ -52,7 +52,13 @@ ImageCollections::ImageCollections(std::string dirName){
 
     cv::Mat featureMat(images.size(), 27, CV_32FC1);
     for(int i = 0; i < images.size(); ++i){
-        images[i]->colorInfo.reshape(1, 1).copyTo(featureMat.row(i));
+        cv::Mat lab;
+        images[i]->colorInfo.convertTo(lab, CV_32FC3);
+
+        lab *= 1./256;
+        cv::cvtColor(lab, lab, CV_BGR2Lab);
+
+        lab.reshape(1,1).copyTo(featureMat.row(i));
     }
 
     kdtree = std::make_shared<cv::flann::Index>(featureMat, cv::flann::KDTreeIndexParams(4));
