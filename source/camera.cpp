@@ -65,7 +65,6 @@ int main(int argc, char * argv[])
                   << std::endl;
 
         cv::imshow("sample", outputImage);
-        cv::imshow("master", resizedFrame);
     }
 
     return 0;
