@@ -37,16 +37,17 @@ int main(int argc, char const* argv[])
     auto startTime = std::chrono::system_clock::now();
     while (cv::waitKey(1) != 'q') {
         auto nowTime = std::chrono::system_clock::now(); 
-        auto dur = nowTime - startTime;
-        double fps = (double)tickCount++ / (std::chrono::duration_cast<std::chrono::milliseconds>(dur).count()) * 1000;
-        std::cout << std::fixed << "fps: " << fps << std::endl;
+        double fps = (double)tickCount++ /
+                     (std::chrono::duration_cast<std::chrono::milliseconds>(nowTime - startTime).count()) * 1000;
+        std::cout << std::fixed << "fps: " << fps;
 
         cap >> frame;
         cv::resize(frame, resizedFrame, masterSize);
-        equalizeHistgram(resizedFrame);
+        // equalizeHistgram(resizedFrame);
         resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
         cv::cvtColor(masterImage, masterImage, CV_BGR2Lab);
 
+        nowTime = std::chrono::system_clock::now(); 
         for(int i = 0; i < heightTile; ++i){
             for(int j = 0; j < widthTile; ++j){
                 cv::Mat cropped = masterImage(cv::Rect(j*3, i*3, 3, 3)).clone();
@@ -55,6 +56,13 @@ int main(int argc, char const* argv[])
                 nearestChip.copyTo(outputImage(cv::Rect(j*tileSize, i*tileSize, tileSize, tileSize)));
             }
         }
+        std::cout << " ImageProcessing: " <<
+                     std::chrono::duration_cast<std::chrono::milliseconds>(
+                            std::chrono::system_clock::now() - nowTime
+                     ).count()
+                  << "msec"
+                  << std::endl;
+         
 
         cv::imshow("sample", outputImage);
         cv::imshow("master", resizedFrame);
