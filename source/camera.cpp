@@ -6,18 +6,6 @@
 #include "opencv2/opencv.hpp"
 #include "cmdline.h"
 
-void equalizeHistgram(cv::Mat& image){
-    std::vector<cv::Mat> planes;
-    cv::Mat imgHistEqualized;
-    cv::cvtColor(image, imgHistEqualized, CV_BGR2YCrCb);
-    cv::split(imgHistEqualized, planes);
-
-    cv::equalizeHist(planes[0], planes[0]);
-
-    cv::merge(planes, imgHistEqualized);
-    cv::cvtColor(imgHistEqualized, image, CV_YCrCb2BGR);
-}
-
 void initParser(cmdline::parser& parser){
     parser.add<int>("height", 'h', "Number of rows of tiles", 100);
     parser.add<int>("width", 'w', "Number of columns of tiles", 60);
@@ -57,7 +45,6 @@ int main(int argc, char * argv[])
 
         cap >> frame;
         cv::resize(frame, resizedFrame, masterSize);
-        // equalizeHistgram(resizedFrame);
         resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
         cv::cvtColor(masterImage, masterImage, CV_BGR2Lab);
 
