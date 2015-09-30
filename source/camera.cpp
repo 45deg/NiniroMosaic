@@ -52,7 +52,7 @@ int main(int argc, char const* argv[])
             for(int j = 0; j < widthTile; ++j){
                 cv::Mat cropped = masterImage(cv::Rect(j*3, i*3, 3, 3)).clone();
 
-                cv::Mat& nearestChip = imageCollections.findNearest(cropped);
+                cv::Mat nearestChip = imageCollections.findNearest(cropped);
                 nearestChip.copyTo(outputImage(cv::Rect(j*tileSize, i*tileSize, tileSize, tileSize)));
             }
         }

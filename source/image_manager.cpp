@@ -63,7 +63,7 @@ ImageCollections::ImageCollections(std::string dirName){
     kdtree = std::make_shared<cv::flann::Index>(featureMat, cv::flann::KDTreeIndexParams(4));
 }
 
-cv::Mat& ImageCollections::findNearest(cv::Mat& color) {
+cv::Mat ImageCollections::findNearest(cv::Mat& color) {
     cv::Mat query = color.reshape(1, 1);
     cv::Mat index;
     cv::Mat dist;

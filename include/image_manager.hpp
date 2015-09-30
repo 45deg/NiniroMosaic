@@ -23,7 +23,7 @@ private:
 
 public:
     ImageCollections(std::string);
-    cv::Mat& findNearest(cv::Mat& color);
+    cv::Mat findNearest(cv::Mat& color);
 
 private:
     std::vector<std::string> getListOfFiles(std::string dirName);
