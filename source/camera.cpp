@@ -4,6 +4,7 @@
 #include <string>
 #include "image_manager.hpp"
 #include "opencv2/opencv.hpp"
+#include "cmdline.h"
 
 void equalizeHistgram(cv::Mat& image){
     std::vector<cv::Mat> planes;
@@ -17,23 +18,34 @@ void equalizeHistgram(cv::Mat& image){
     cv::cvtColor(imgHistEqualized, image, CV_YCrCb2BGR);
 }
 
-int main(int argc, char const* argv[])
+void initParser(cmdline::parser& parser){
+    parser.add<int>("height", 'h', "Number of rows of tiles", 100);
+    parser.add<int>("width", 'w', "Number of columns of tiles", 60);
+    parser.add<int>("size", 's', "Image size of tile", 24);
+    parser.add<std::string>("directory", 'd', "Directory path of imagesets", "image");
+}
+
+int main(int argc, char * argv[])
 {
+    cmdline::parser args;
+    initParser(args);
+    args.parse_check(argc, argv);
+
     std::cout << "Set up camera ..." << std::endl;
 
     cv::VideoCapture cap(0);
     cv::Mat frame;
     cv::Mat frameRefined;
-    int widthTile = 100;
-    int heightTile = 60;
-    int tileSize = 24;
+    int widthTile = args.get<int>("width");
+    int heightTile = args.get<int>("height");
+    int tileSize = args.get<int>("size");
 
     const cv::Size masterSize = cv::Size(widthTile * 3, heightTile * 3);
         
     cv::Mat resizedFrame(masterSize, CV_8UC3);
     cv::Mat masterImage(masterSize, CV_32FC3);
     cv::Mat outputImage(cv::Size(widthTile * tileSize, heightTile * tileSize), CV_8UC3);
-    ImageCollections imageCollections("image", tileSize);
+    ImageCollections imageCollections(args.get<std::string>("directory"), tileSize);
 
     int tickCount = 0;
     auto startTime = std::chrono::system_clock::now();
