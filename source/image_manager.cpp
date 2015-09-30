@@ -49,7 +49,7 @@ ImageCollections::ImageCollections(std::string dirName, int tileSize){
         if(tile->image.data != NULL) {
             images.push_back(tile);
         }
-        std::cout << "\033[0G" << images.size() << " images loaded";
+        std::cout << "\033[0G" << images.size() << " images loaded" << std::flush;
     }
 
     std::cout << std::endl;
