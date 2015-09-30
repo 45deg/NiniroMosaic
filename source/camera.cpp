@@ -31,7 +31,7 @@ int main(int argc, char const* argv[])
     cv::Mat resizedFrame(masterSize, CV_8UC3);
     cv::Mat masterImage(masterSize, CV_32FC3);
     cv::Mat outputImage(cv::Size(widthTile * tileSize, heightTile * tileSize), CV_8UC3);
-    ImageCollections imageCollections("image");
+    ImageCollections imageCollections("image", tileSize);
 
     int tickCount = 0;
     auto startTime = std::chrono::system_clock::now();

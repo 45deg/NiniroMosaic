@@ -7,8 +7,9 @@
 #include <vector>
 #include <climits>
 
-Tile::Tile(std::string filename){
+Tile::Tile(std::string filename, int tileSize){
     image = cv::imread(filename, 1);
+    cv::resize(image, image, cv::Size(tileSize, tileSize));
 
     colorInfo = cv::Mat(3, 3, CV_8UC3);
 
@@ -40,15 +41,19 @@ Tile::Tile(std::string filename){
     // std::cout << "Type:" << image.type() << ' ' << cv::format(colorInfo, "python") << std::endl;
 }
 
-ImageCollections::ImageCollections(std::string dirName){
+ImageCollections::ImageCollections(std::string dirName, int tileSize){
     std::vector<std::string> files = getListOfFiles(dirName);
 
     for (auto&& file : files) {
-        auto tile = std::make_shared<Tile>(file);
+        auto tile = std::make_shared<Tile>(file, tileSize);
         if(tile->image.data != NULL) {
             images.push_back(tile);
         }
+        std::cout << "\033[0G" << images.size() << " images loaded";
     }
+
+    std::cout << std::endl;
+    std::cout << "Making feature..." << std::endl;
 
     cv::Mat featureMat(images.size(), 27, CV_32FC1);
     for(int i = 0; i < images.size(); ++i){
@@ -59,6 +64,8 @@ ImageCollections::ImageCollections(std::string dirName){
 
         lab.reshape(1,1).copyTo(featureMat.row(i));
     }
+
+    std::cout << "Making index..." << std::endl;
 
     kdtree = std::make_shared<cv::flann::Index>(featureMat, cv::flann::KDTreeIndexParams(4));
 }
