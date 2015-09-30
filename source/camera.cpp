@@ -19,6 +19,8 @@ void equalizeHistgram(cv::Mat& image){
 
 int main(int argc, char const* argv[])
 {
+    std::cout << "Set up camera ..." << std::endl;
+
     cv::VideoCapture cap(0);
     cv::Mat frame;
     cv::Mat frameRefined;
@@ -62,7 +64,6 @@ int main(int argc, char const* argv[])
                      ).count()
                   << "msec"
                   << std::endl;
-         
 
         cv::imshow("sample", outputImage);
         cv::imshow("master", resizedFrame);
