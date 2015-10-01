@@ -1,6 +1,8 @@
 #include "server.hpp"
 #include <string>
 #include <thread>
+#include <iostream>
+#include <chrono>
 #include "zmq.hpp"
 #include "image_manager.hpp"
 #include "image_process.hpp"
@@ -25,10 +27,20 @@ void Server::operator()(ImageCollections& imageCollections) {
         // wait for request
         socket.recv (&request);
         std::string requestData = std::string(static_cast<char*>(request.data())
-                ,request.size());
-        // std::cout << "Received " << requestData << " " << data << std::endl;
+                                             ,request.size());
+
+        std::cout << "Received " << requestData;
+
+        auto nowTime = std::chrono::system_clock::now();
 
         std::string responseData = processImage(requestData, imageCollections);
+
+        std::cout << " ImageProcessing: " <<
+                     std::chrono::duration_cast<std::chrono::milliseconds>(
+                            std::chrono::system_clock::now() - nowTime
+                     ).count()
+                  << "msec"
+                  << std::endl;
 
         // send response
         int messageSize = responseData.size();
