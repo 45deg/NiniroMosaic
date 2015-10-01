@@ -3,6 +3,7 @@
 #include <chrono>
 #include <string>
 #include "image_manager.hpp"
+#include "image_process.hpp"
 #include "opencv2/opencv.hpp"
 #include "cmdline.h"
 
@@ -48,15 +49,10 @@ int main(int argc, char * argv[])
         resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
         cv::cvtColor(masterImage, masterImage, CV_BGR2Lab);
 
-        nowTime = std::chrono::system_clock::now(); 
-        for(int i = 0; i < heightTile; ++i){
-            for(int j = 0; j < widthTile; ++j){
-                cv::Mat cropped = masterImage(cv::Rect(j*3, i*3, 3, 3)).clone();
+        makeMosaicArt(masterImage, outputImage, imageCollections,
+                      widthTile, heightTile, tileSize);
 
-                cv::Mat nearestChip = imageCollections.findNearest(cropped);
-                nearestChip.copyTo(outputImage(cv::Rect(j*tileSize, i*tileSize, tileSize, tileSize)));
-            }
-        }
+        nowTime = std::chrono::system_clock::now(); 
         std::cout << " ImageProcessing: " <<
                      std::chrono::duration_cast<std::chrono::milliseconds>(
                             std::chrono::system_clock::now() - nowTime
