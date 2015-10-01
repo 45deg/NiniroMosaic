@@ -1,7 +1,9 @@
 #include <iostream>
 #include <iomanip>
 #include <chrono>
+#include <thread>
 #include <string>
+#include "server.hpp"
 #include "image_manager.hpp"
 #include "image_process.hpp"
 #include "opencv2/opencv.hpp"
@@ -35,6 +37,10 @@ int main(int argc, char * argv[])
     cv::Mat masterImage(masterSize, CV_32FC3);
     cv::Mat outputImage(cv::Size(widthTile * tileSize, heightTile * tileSize), CV_8UC3);
     ImageCollections imageCollections(args.get<std::string>("directory"), tileSize);
+
+    // run image conversion server
+    std::thread server(Server(8080, tileSize), std::ref(imageCollections));
+    server.detach();
 
     int tickCount = 0;
     auto startTime = std::chrono::system_clock::now();
