@@ -55,10 +55,11 @@ int main(int argc, char * argv[])
         resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
         cv::cvtColor(masterImage, masterImage, CV_BGR2Lab);
 
+        nowTime = std::chrono::system_clock::now(); 
+
         makeMosaicArt(masterImage, outputImage, imageCollections,
                       widthTile, heightTile, tileSize);
 
-        nowTime = std::chrono::system_clock::now(); 
         std::cout << " ImageProcessing: " <<
                      std::chrono::duration_cast<std::chrono::milliseconds>(
                             std::chrono::system_clock::now() - nowTime
