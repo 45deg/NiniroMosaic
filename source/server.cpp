@@ -70,5 +70,5 @@ std::string Server::makeOutputFilePath(std::string& inFile){
     int dotPos = inFile.find_last_of('.');
     std::string toExt = inFile.substr(0, dotPos);
     std::string ext = inFile.substr(dotPos+1);
-    return toExt + "_out" + ext;
+    return toExt + "_out." + ext;
 }
