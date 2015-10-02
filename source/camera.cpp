@@ -9,11 +9,31 @@
 #include "opencv2/opencv.hpp"
 #include "cmdline.h"
 
+#include <GLFW/glfw3.h>
+#include "glext.h"
+
 void initParser(cmdline::parser& parser){
     parser.add<int>("height", 'h', "Number of rows of tiles", 100);
     parser.add<int>("width", 'w', "Number of columns of tiles", 60);
     parser.add<int>("size", 's', "Image size of tile", 24);
     parser.add<std::string>("directory", 'd', "Directory path of imagesets", "image");
+}
+
+GLFWwindow* initOpenGLWindow(const cv::Size size, const std::string title){
+    // Initializes the GLFW library.
+    glfwInit();
+    // Create Window
+    GLFWwindow* window = glfwCreateWindow( size.width, size.height, title.c_str(), nullptr, nullptr );
+    glfwMakeContextCurrent( window );
+
+    GLuint texture;
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+
+    return window;
 }
 
 int main(int argc, char * argv[])
@@ -44,12 +64,19 @@ int main(int argc, char * argv[])
 
     int tickCount = 0;
     auto startTime = std::chrono::system_clock::now();
-    while (cv::waitKey(1) != 'q') {
+
+    GLFWwindow* window = initOpenGLWindow(outputImage.size(), "Mosaic");
+
+    // do until window close
+    while(! glfwWindowShouldClose( window ))
+    {
+        // calc FPS
         auto nowTime = std::chrono::system_clock::now(); 
         double fps = (double)tickCount++ /
                      (std::chrono::duration_cast<std::chrono::milliseconds>(nowTime - startTime).count()) * 1000;
         std::cout << std::fixed << "fps: " << fps;
 
+        // Prosessing image From camera
         cap >> frame;
         cv::resize(frame, resizedFrame, masterSize);
         resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
@@ -67,8 +94,33 @@ int main(int argc, char * argv[])
                   << "msec"
                   << std::endl;
 
-        cv::imshow("sample", outputImage);
+        // Draw Image
+
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        cv::flip(outputImage, outputImage, 0);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, outputImage.size().width, outputImage.size().height,
+                     0, GL_BGR_EXT, GL_UNSIGNED_BYTE, outputImage.data);
+
+        glEnable(GL_TEXTURE_2D);
+        glBegin(GL_QUADS);
+            glTexCoord2d(0.0, 1.0);
+            glVertex2d(-1,1);
+            glTexCoord2d(0.0, 0.0);
+            glVertex2d(-1,-1);
+            glTexCoord2d(1.0, 0.0);
+            glVertex2d(1,-1);
+            glTexCoord2d(1.0, 1.0);
+            glVertex2d(1,1);
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
+
+        glfwSwapBuffers(window);
+
+        glfwPollEvents();
     }
+
+    glfwTerminate();
 
     return 0;
 }
