@@ -1,7 +1,9 @@
 #include <iostream>
 #include <iomanip>
 #include <chrono>
+#include <thread>
 #include <string>
+#include "server.hpp"
 #include "image_manager.hpp"
 #include "image_process.hpp"
 #include "opencv2/opencv.hpp"
@@ -36,6 +38,10 @@ int main(int argc, char * argv[])
     cv::Mat outputImage(cv::Size(widthTile * tileSize, heightTile * tileSize), CV_8UC3);
     ImageCollections imageCollections(args.get<std::string>("directory"), tileSize);
 
+    // run image conversion server
+    std::thread server(Server(8080, tileSize), std::ref(imageCollections));
+    server.detach();
+
     int tickCount = 0;
     auto startTime = std::chrono::system_clock::now();
     while (cv::waitKey(1) != 'q') {
@@ -49,10 +55,11 @@ int main(int argc, char * argv[])
         resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
         cv::cvtColor(masterImage, masterImage, CV_BGR2Lab);
 
+        nowTime = std::chrono::system_clock::now(); 
+
         makeMosaicArt(masterImage, outputImage, imageCollections,
                       widthTile, heightTile, tileSize);
 
-        nowTime = std::chrono::system_clock::now(); 
         std::cout << " ImageProcessing: " <<
                      std::chrono::duration_cast<std::chrono::milliseconds>(
                             std::chrono::system_clock::now() - nowTime
