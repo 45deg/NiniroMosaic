@@ -53,8 +53,8 @@ void Server::operator()(ImageCollections& imageCollections) {
 std::string Server::processImage(std::string inFile, ImageCollections& imageCollections) {
     cv::Mat image = cv::imread(inFile);
 
-    int widthTile = image.size().width / tileSize;
-    int heightTile = image.size().height / tileSize;
+    int widthTile = image.size().width / tileSize * 2;
+    int heightTile = image.size().height / tileSize * 2;
 
     const cv::Size masterSize = cv::Size(widthTile * 3, heightTile * 3);
 
