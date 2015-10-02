@@ -63,17 +63,18 @@ int main(int argc, char * argv[])
     server.detach();
 
     int tickCount = 0;
-    auto startTime = std::chrono::high_resolution_clock::now();
 
     GLFWwindow* window = initOpenGLWindow(outputImage.size(), "Mosaic");
+
+    auto prevTime = std::chrono::high_resolution_clock::now();
 
     // do until window close
     while(! glfwWindowShouldClose( window ))
     {
         // calc FPS
-        auto nowTime = std::chrono::high_resolution_clock::now(); 
-        double fps = (double)tickCount++ /
-                     (std::chrono::duration_cast<std::chrono::milliseconds>(nowTime - startTime).count()) * 1000;
+        auto curTime = std::chrono::high_resolution_clock::now(); 
+        double fps = 1000./std::chrono::duration_cast<std::chrono::milliseconds>(curTime - prevTime).count();
+        prevTime = curTime;
         std::cout << std::fixed << "fps: " << fps;
 
         // Prosessing image From camera
@@ -82,14 +83,14 @@ int main(int argc, char * argv[])
         resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
         cv::cvtColor(masterImage, masterImage, CV_BGR2Lab);
 
-        nowTime = std::chrono::high_resolution_clock::now(); 
+        curTime = std::chrono::high_resolution_clock::now(); 
 
         makeMosaicArt(masterImage, outputImage, imageCollections,
                       widthTile, heightTile, tileSize);
 
         std::cout << " ImageProcessing: " <<
                      std::chrono::duration_cast<std::chrono::milliseconds>(
-                            std::chrono::high_resolution_clock::now() - nowTime
+                            std::chrono::high_resolution_clock::now() - curTime
                      ).count()
                   << "msec"
                   << std::endl;
