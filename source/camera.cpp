@@ -45,14 +45,14 @@ int main(int argc, char * argv[])
     std::cout << "Set up camera ..." << std::endl;
 
     cv::VideoCapture cap(0);
+
     cv::Mat frame;
-    cv::Mat frameRefined;
     int widthTile = args.get<int>("width");
     int heightTile = args.get<int>("height");
     int tileSize = args.get<int>("size");
 
     const cv::Size masterSize = cv::Size(widthTile * 3, heightTile * 3);
-        
+
     cv::Mat resizedFrame(masterSize, CV_8UC3);
     cv::Mat masterImage(masterSize, CV_32FC3);
     cv::Mat outputImage(cv::Size(widthTile * tileSize, heightTile * tileSize), CV_8UC3);
@@ -61,8 +61,6 @@ int main(int argc, char * argv[])
     // run image conversion server
     std::thread server(Server(8080, tileSize), std::ref(imageCollections));
     server.detach();
-
-    int tickCount = 0;
 
     GLFWwindow* window = initOpenGLWindow(outputImage.size(), "Mosaic");
 
