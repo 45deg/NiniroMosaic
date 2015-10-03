@@ -1,3 +1,5 @@
+#pragma once
+
 #include "image_manager.hpp"
 #include "opencv2/opencv.hpp"
 

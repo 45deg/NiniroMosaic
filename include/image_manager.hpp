@@ -1,5 +1,4 @@
-#ifndef __IMAGE_MANAGER_HPP
-#define __IMAGE_MANAGER_HPP
+#pragma once
 
 #include <memory>
 #include <iostream>
@@ -28,5 +27,3 @@ public:
 private:
     std::vector<std::string> getListOfFiles(std::string dirName);
 };
-
-#endif
