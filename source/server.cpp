@@ -5,7 +5,6 @@
 #include <chrono>
 #include "zmq.hpp"
 #include "image_manager.hpp"
-#include "image_process.hpp"
 #include "opencv2/opencv.hpp"
 
 Server::Server(int _port, int _tileSize)
@@ -66,8 +65,8 @@ std::string Server::processImage(std::string inFile, ImageCollections& imageColl
     resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
     cv::cvtColor(masterImage, masterImage, CV_BGR2Lab);
 
-    makeMosaicArt(masterImage, outputImage, imageCollections,
-            widthTile, heightTile, tileSize);
+    imageCollections.makeMosaicArt(masterImage, outputImage,
+                                   widthTile, heightTile, tileSize);
 
     // output filename
     std::string outFile = makeOutputFilePath(inFile);

@@ -5,7 +5,6 @@
 #include <string>
 #include "server.hpp"
 #include "image_manager.hpp"
-#include "image_process.hpp"
 #include "opencv2/opencv.hpp"
 #include "cmdline.h"
 
@@ -99,8 +98,8 @@ int main(int argc, char * argv[])
 
         curTime = std::chrono::high_resolution_clock::now(); 
 
-        makeMosaicArt(masterImage, outputImage, imageCollections,
-                widthTile, heightTile, tileSize);
+        imageCollections.makeMosaicArt(masterImage, outputImage,
+                                       widthTile, heightTile, tileSize);
 
         std::cout << " ImageProcessing: " <<
             std::chrono::duration_cast<std::chrono::milliseconds>(
