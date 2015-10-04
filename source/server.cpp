@@ -2,6 +2,7 @@
 #include <string>
 #include <thread>
 #include <iostream>
+#include <fstream>
 #include <chrono>
 #include "zmq.hpp"
 #include "image_manager.hpp"
@@ -16,37 +17,45 @@ Server::Server(int _port, int _tileSize, int _precision)
 
 // thread main
 void Server::operator()(ImageCollections& imageCollections) {
+    std::ofstream log("/var/log/kiniro_daemon.log", std::ios_base::app);
+    
+    log << "Started server";
+
     // prepare socket
     zmq::context_t context (1);
     zmq::socket_t socket(context, ZMQ_REP);
     socket.bind("tcp://*:" + std::to_string(port));
 
     while (true) {
-        zmq::message_t request;
+        try {
+            zmq::message_t request;
 
-        // wait for request
-        socket.recv (&request);
-        std::string requestData = std::string(static_cast<char*>(request.data())
-                                             ,request.size());
+            // wait for request
+            socket.recv (&request);
+            std::string requestData = std::string(static_cast<char*>(request.data())
+                                                 ,request.size());
 
-        std::cout << "Received " << requestData;
+            log << "[Info] Received" << requestData;
 
-        auto nowTime = std::chrono::system_clock::now();
+            auto nowTime = std::chrono::system_clock::now();
 
-        std::string responseData = processImage(requestData, imageCollections);
+            std::string responseData = processImage(requestData, imageCollections);
 
-        std::cout << " ImageProcessing: " <<
+            log << " ImageProcessing: " <<
                      std::chrono::duration_cast<std::chrono::milliseconds>(
                             std::chrono::system_clock::now() - nowTime
                      ).count()
                   << "msec"
                   << std::endl;
 
-        // send response
-        int messageSize = responseData.size();
-        zmq::message_t reply (messageSize);
-        memcpy ((void *)reply.data(), responseData.c_str(), messageSize);
-        socket.send (reply);
+            // send response
+            int messageSize = responseData.size();
+            zmq::message_t reply (messageSize);
+            memcpy ((void *)reply.data(), responseData.c_str(), messageSize);
+            socket.send (reply);
+        } catch (std::runtime_error& e) {
+            log << "[Error] e.what()" << std::endl;
+        }
     }
 }
 
