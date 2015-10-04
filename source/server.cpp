@@ -17,9 +17,9 @@ Server::Server(int _port, int _tileSize, int _precision)
 
 // thread main
 void Server::operator()(ImageCollections& imageCollections) {
-    std::ofstream log("/var/log/kiniro_daemon.log", std::ios_base::app);
+    std::ofstream log("/var/log/niniro_daemon.log", std::ios_base::app);
     
-    log << "Started server";
+    log << "Started server" << std::endl;
 
     // prepare socket
     zmq::context_t context (1);
@@ -57,6 +57,8 @@ void Server::operator()(ImageCollections& imageCollections) {
             log << "[Error] e.what()" << std::endl;
         }
     }
+
+    log.close();
 }
 
 std::string Server::processImage(std::string inFile, ImageCollections& imageCollections) {
