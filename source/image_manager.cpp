@@ -8,16 +8,17 @@
 #include <climits>
 
 Tile::Tile(std::string filename, int tileSize){
+
     image = cv::imread(filename, 1);
     cv::resize(image, image, cv::Size(tileSize, tileSize));
 
-    colorInfo = cv::Mat(3, 3, CV_8UC3);
+    colorInfo = cv::Mat(5, 5, CV_8UC3);
 
-    int cropWidth = image.cols / 3;
-    int cropHeight = image.rows / 3;
+    int cropWidth = image.cols / 5;
+    int cropHeight = image.rows / 5;
 
-    for(int i = 0; i < 3; ++i){
-        for(int j = 0; j < 3; ++j){
+    for(int i = 0; i < 5; ++i){
+        for(int j = 0; j < 5; ++j){
             double r = 0, g = 0, b = 0;
 
             for(int y = cropHeight * i; y < cropHeight * (i+1); ++y){
@@ -55,7 +56,7 @@ ImageCollections::ImageCollections(std::string dirName, int tileSize){
     std::cout << std::endl;
     std::cout << "Making feature..." << std::endl;
 
-    cv::Mat featureMat(images.size(), 27, CV_32FC1);
+    cv::Mat featureMat(images.size(), 5*5*3, CV_32FC1);
     for(int i = 0; i < images.size(); ++i){
         cv::Mat lab;
         images[i]->colorInfo.convertTo(lab, CV_32FC3, 1./256);

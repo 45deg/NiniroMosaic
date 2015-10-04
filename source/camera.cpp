@@ -58,7 +58,7 @@ int main(int argc, char * argv[])
     int heightTile = args.get<int>("height");
     int tileSize = args.get<int>("size");
 
-    const cv::Size masterSize = cv::Size(widthTile * 3, heightTile * 3);
+    const cv::Size masterSize = cv::Size(widthTile * 5, heightTile * 5);
 
     cv::Mat resizedFrame(masterSize, CV_8UC3);
     cv::Mat masterImage(masterSize, CV_32FC3);
