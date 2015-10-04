@@ -9,8 +9,6 @@
 #include "cmdline.h"
 
 void initParser(cmdline::parser& parser){
-    parser.add<int>("height", 'h', "Number of rows of tiles", 100);
-    parser.add<int>("width", 'w', "Number of columns of tiles", 60);
     parser.add<int>("size", 's', "Image size of tile", 24);
     parser.add<int>("precision", 'p', "Precision of tile", 5);
     parser.add<std::string>("directory", 'd', "Directory path of imagesets (absolute path)", "image");
@@ -37,16 +35,9 @@ int main(int argc, char * argv[])
     initParser(args);
     args.parse_check(argc, argv);
 
-    int widthTile = args.get<int>("width");
-    int heightTile = args.get<int>("height");
     int tileSize = args.get<int>("size");
     int precision = args.get<int>("precision");
 
-    const cv::Size masterSize = cv::Size(widthTile * precision, heightTile * precision);
-
-    cv::Mat resizedFrame(masterSize, CV_8UC3);
-    cv::Mat masterImage(masterSize, CV_32FC3);
-    cv::Mat outputImage(cv::Size(widthTile * tileSize, heightTile * tileSize), CV_8UC3);
     ImageCollections imageCollections(args.get<std::string>("directory"), tileSize, precision); 
 
     // run image conversion server
