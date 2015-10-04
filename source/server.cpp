@@ -7,10 +7,11 @@
 #include "image_manager.hpp"
 #include "opencv2/opencv.hpp"
 
-Server::Server(int _port, int _tileSize)
+Server::Server(int _port, int _tileSize, int _precision)
 {
     port = _port;
     tileSize = _tileSize;
+    precision = _precision;
 }
 
 // thread main
@@ -55,7 +56,7 @@ std::string Server::processImage(std::string inFile, ImageCollections& imageColl
     int widthTile = image.size().width / tileSize * 2;
     int heightTile = image.size().height / tileSize * 2;
 
-    const cv::Size masterSize = cv::Size(widthTile * 3, heightTile * 3);
+    const cv::Size masterSize = cv::Size(widthTile * precision, heightTile * precision);
 
     cv::Mat resizedFrame(masterSize, CV_8UC3);
     cv::Mat masterImage(masterSize, CV_32FC3);

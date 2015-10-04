@@ -58,7 +58,7 @@ int main(int argc, char * argv[])
     ImageCollections imageCollections(args.get<std::string>("directory"), tileSize, precision); 
 
     // run image conversion server
-    std::thread server(Server(8080, tileSize), std::ref(imageCollections));
+    std::thread server(Server(8080, tileSize, precision), std::ref(imageCollections));
     server.detach();
 
     GLFWwindow* window = initOpenGLWindow(outputImage.size(), "Mosaic");
