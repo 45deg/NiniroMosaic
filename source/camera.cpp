@@ -87,6 +87,7 @@ int main(int argc, char * argv[])
         cap >> frame;
 
         cv::resize(frame, resizedFrame, masterSize);
+        cv::flip(resizedFrame, resizedFrame, 1);
         resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
         cv::cvtColor(masterImage, masterImage, CV_BGR2Lab);
 
