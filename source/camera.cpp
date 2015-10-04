@@ -16,7 +16,7 @@ void initParser(cmdline::parser& parser){
     parser.add<int>("height", 'h', "Number of rows of tiles", 100);
     parser.add<int>("width", 'w', "Number of columns of tiles", 60);
     parser.add<int>("size", 's', "Image size of tile", 24);
-    parser.add<int>("precision", 'p', "Precision of tile", 3);
+    parser.add<int>("precision", 'p', "Precision of tile", 5);
     parser.add<std::string>("directory", 'd', "Directory path of imagesets", "image");
     parser.add<std::string>("movie", 'm', "path of movie", false);
 }
