@@ -17,6 +17,7 @@ void initParser(cmdline::parser& parser){
     parser.add<int>("width", 'w', "Number of columns of tiles", 60);
     parser.add<int>("size", 's', "Image size of tile", 24);
     parser.add<std::string>("directory", 'd', "Directory path of imagesets", "image");
+    parser.add<std::string>("movie", 'm', "path of movie", false);
 }
 
 GLFWwindow* initOpenGLWindow(const cv::Size size, const std::string title){
@@ -44,7 +45,13 @@ int main(int argc, char * argv[])
 
     std::cout << "Set up camera ..." << std::endl;
 
-    cv::VideoCapture cap(0);
+    cv::VideoCapture cap;
+
+    if(args.exist("movie")) {
+        cap.open(args.get<std::string>("movie"));
+    } else {
+        cap.open(0);
+    }
 
     cv::Mat frame;
     int widthTile = args.get<int>("width");
@@ -67,7 +74,7 @@ int main(int argc, char * argv[])
     auto prevTime = std::chrono::high_resolution_clock::now();
 
     // do until window close
-    while(! glfwWindowShouldClose( window ))
+    while(! glfwWindowShouldClose( window ) && cap.isOpened() )
     {
         // calc FPS
         auto curTime = std::chrono::high_resolution_clock::now(); 
@@ -77,6 +84,7 @@ int main(int argc, char * argv[])
 
         // Prosessing image From camera
         cap >> frame;
+
         cv::resize(frame, resizedFrame, masterSize);
         resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
         cv::cvtColor(masterImage, masterImage, CV_BGR2Lab);
