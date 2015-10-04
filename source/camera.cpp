@@ -16,7 +16,9 @@ void initParser(cmdline::parser& parser){
     parser.add<int>("height", 'h', "Number of rows of tiles", 100);
     parser.add<int>("width", 'w', "Number of columns of tiles", 60);
     parser.add<int>("size", 's', "Image size of tile", 24);
+    parser.add<int>("precision", 'p', "Precision of tile", 5);
     parser.add<std::string>("directory", 'd', "Directory path of imagesets", "image");
+    parser.add<std::string>("movie", 'm', "path of movie", false);
 }
 
 GLFWwindow* initOpenGLWindow(const cv::Size size, const std::string title){
@@ -44,20 +46,26 @@ int main(int argc, char * argv[])
 
     std::cout << "Set up camera ..." << std::endl;
 
-    cv::VideoCapture cap(0);
+    cv::VideoCapture cap;
+
+    if(args.exist("movie")) {
+        cap.open(args.get<std::string>("movie"));
+    } else {
+        cap.open(0);
+    }
 
     cv::Mat frame;
     int widthTile = args.get<int>("width");
     int heightTile = args.get<int>("height");
     int tileSize = args.get<int>("size");
+    int precision = args.get<int>("precision");
 
-    const cv::Size masterSize = cv::Size(widthTile * 3, heightTile * 3);
+    const cv::Size masterSize = cv::Size(widthTile * precision, heightTile * precision);
 
     cv::Mat resizedFrame(masterSize, CV_8UC3);
     cv::Mat masterImage(masterSize, CV_32FC3);
     cv::Mat outputImage(cv::Size(widthTile * tileSize, heightTile * tileSize), CV_8UC3);
-    ImageCollections imageCollections(args.get<std::string>("directory"), tileSize);
-
+    ImageCollections imageCollections(args.get<std::string>("directory"), tileSize, precision); 
     // run image conversion server
     std::thread server(Server(8080, tileSize), std::ref(imageCollections));
     server.detach();
@@ -67,7 +75,7 @@ int main(int argc, char * argv[])
     auto prevTime = std::chrono::high_resolution_clock::now();
 
     // do until window close
-    while(! glfwWindowShouldClose( window ))
+    while(! glfwWindowShouldClose( window ) && cap.isOpened() )
     {
         // calc FPS
         auto curTime = std::chrono::high_resolution_clock::now(); 
@@ -77,6 +85,7 @@ int main(int argc, char * argv[])
 
         // Prosessing image From camera
         cap >> frame;
+
         cv::resize(frame, resizedFrame, masterSize);
         resizedFrame.convertTo(masterImage, CV_32FC3, 1./256);
         cv::cvtColor(masterImage, masterImage, CV_BGR2Lab);
