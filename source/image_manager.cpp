@@ -1,5 +1,6 @@
 #include "image_manager.hpp"
 #include <iostream>
+#include <fstream>
 #include <memory>
 #include <dirent.h>
 #include <sys/types.h>
@@ -45,6 +46,7 @@ Tile::Tile(std::string filename, int tileSize, int presicion){
 }
 
 ImageCollections::ImageCollections(std::string dirName, int tileSize, int presicion){
+    std::ofstream log("/var/log/niniro_daemon.log", std::ios_base::app);
     std::vector<std::string> files = getListOfFiles(dirName);
 
     for (auto&& file : files) {
@@ -52,11 +54,10 @@ ImageCollections::ImageCollections(std::string dirName, int tileSize, int presic
         if(tile->image.data != NULL) {
             images.push_back(tile);
         }
-        std::cout << "\033[0G" << images.size() << " images loaded" << std::flush;
     }
 
-    std::cout << std::endl;
-    std::cout << "Making feature..." << std::endl;
+    log << "[ImgCol] " << images.size() << " images loaded" << std::endl;
+    log << "[ImgCol] Making feature..." << std::endl;
 
     cv::Mat featureMat(images.size(), presicion*presicion*3, CV_32FC1);
     for(int i = 0; i < images.size(); ++i){
@@ -68,7 +69,7 @@ ImageCollections::ImageCollections(std::string dirName, int tileSize, int presic
         lab.reshape(1,1).copyTo(featureMat.row(i));
     }
 
-    std::cout << "Making index..." << std::endl;
+    log << "[ImgCol] Making index..." << std::endl;
 
     kdtree = std::make_shared<cv::flann::Index>(featureMat, cv::flann::KDTreeIndexParams(4));
 }
