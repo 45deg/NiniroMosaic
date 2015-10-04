@@ -12,7 +12,7 @@ struct Tile {
     cv::Mat image;
     cv::Mat colorInfo;
 
-    Tile(std::string, int);
+    Tile(std::string, int, int);
 };
 
 class ImageCollections {
@@ -21,7 +21,7 @@ private:
     std::shared_ptr<cv::flann::Index> kdtree;
 
 public:
-    ImageCollections(std::string, int);
+    ImageCollections(std::string, int, int);
     cv::Mat findNearest(cv::Mat& color);
 
 private:

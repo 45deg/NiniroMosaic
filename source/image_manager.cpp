@@ -7,18 +7,18 @@
 #include <vector>
 #include <climits>
 
-Tile::Tile(std::string filename, int tileSize){
+Tile::Tile(std::string filename, int tileSize, int presicion){
 
     image = cv::imread(filename, 1);
     cv::resize(image, image, cv::Size(tileSize, tileSize));
 
-    colorInfo = cv::Mat(5, 5, CV_8UC3);
+    colorInfo = cv::Mat(presicion, presicion, CV_8UC3);
 
-    int cropWidth = image.cols / 5;
-    int cropHeight = image.rows / 5;
+    int cropWidth = image.cols / presicion;
+    int cropHeight = image.rows / presicion;
 
-    for(int i = 0; i < 5; ++i){
-        for(int j = 0; j < 5; ++j){
+    for(int i = 0; i < presicion; ++i){
+        for(int j = 0; j < presicion; ++j){
             double r = 0, g = 0, b = 0;
 
             for(int y = cropHeight * i; y < cropHeight * (i+1); ++y){
@@ -42,11 +42,11 @@ Tile::Tile(std::string filename, int tileSize){
     // std::cout << "Type:" << image.type() << ' ' << cv::format(colorInfo, "python") << std::endl;
 }
 
-ImageCollections::ImageCollections(std::string dirName, int tileSize){
+ImageCollections::ImageCollections(std::string dirName, int tileSize, int presicion){
     std::vector<std::string> files = getListOfFiles(dirName);
 
     for (auto&& file : files) {
-        auto tile = std::make_shared<Tile>(file, tileSize);
+        auto tile = std::make_shared<Tile>(file, tileSize, presicion);
         if(tile->image.data != NULL) {
             images.push_back(tile);
         }
@@ -56,7 +56,7 @@ ImageCollections::ImageCollections(std::string dirName, int tileSize){
     std::cout << std::endl;
     std::cout << "Making feature..." << std::endl;
 
-    cv::Mat featureMat(images.size(), 5*5*3, CV_32FC1);
+    cv::Mat featureMat(images.size(), presicion*presicion*3, CV_32FC1);
     for(int i = 0; i < images.size(); ++i){
         cv::Mat lab;
         images[i]->colorInfo.convertTo(lab, CV_32FC3, 1./256);
