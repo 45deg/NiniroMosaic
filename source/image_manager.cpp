@@ -6,6 +6,8 @@
 #include "opencv2/opencv.hpp"
 #include <vector>
 #include <climits>
+#include <mutex>
+
 
 Tile::Tile(std::string filename, int tileSize, int presicion){
 
@@ -71,6 +73,21 @@ ImageCollections::ImageCollections(std::string dirName, int tileSize, int presic
     kdtree = std::make_shared<cv::flann::Index>(featureMat, cv::flann::KDTreeIndexParams(4));
 }
 
+void ImageCollections::makeMosaicArt(cv::Mat& masterImage, cv::Mat& outputImage,
+                                     int widthTile, int heightTile, int tileSize){
+    const int dw = masterImage.size().width  / widthTile;
+    const int dh = masterImage.size().height / heightTile;
+
+    for(int i = 0; i < heightTile; ++i){
+        for(int j = 0; j < widthTile; ++j){
+            cv::Mat cropped = masterImage(cv::Rect(j*dw, i*dh, dw, dh)).clone();
+
+            cv::Mat nearestChip = findNearest(cropped);
+            nearestChip.copyTo(outputImage(cv::Rect(j*tileSize, i*tileSize, tileSize, tileSize)));
+        }
+    }
+}
+
 cv::Mat ImageCollections::findNearest(cv::Mat& color) {
     cv::Mat query = color.reshape(1, 1);
     cv::Mat index;
@@ -81,6 +98,7 @@ cv::Mat ImageCollections::findNearest(cv::Mat& color) {
 
     return images[index.at<int>(0,0)]->image;
 }
+
 
 std::vector<std::string> ImageCollections::getListOfFiles(std::string dirName){
     std::vector<std::string> files;
