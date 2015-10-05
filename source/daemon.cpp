@@ -7,6 +7,7 @@
 #include "image_manager.hpp"
 #include "opencv2/opencv.hpp"
 #include "cmdline.h"
+#include <unistd.h>
 
 void initParser(cmdline::parser& parser){
     parser.add<int>("size", 's', "Image size of tile", 24);
