@@ -59,7 +59,7 @@ ImageCollections::ImageCollections(std::string dirName, int tileSize, int presic
     log << "[ImgCol] " << images.size() << " images loaded" << std::endl;
     log << "[ImgCol] Making feature..." << std::endl;
 
-    cv::Mat featureMat(images.size(), presicion*presicion*3, CV_32FC1);
+    featureMat = cv::Mat(images.size(), presicion*presicion*3, CV_32FC1);
     for(int i = 0; i < images.size(); ++i){
         cv::Mat lab;
         images[i]->colorInfo.convertTo(lab, CV_32FC3, 1./256);

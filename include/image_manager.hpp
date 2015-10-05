@@ -20,6 +20,7 @@ class ImageCollections {
 private:
     std::vector<std::shared_ptr<Tile> > images;
     std::shared_ptr<cv::flann::Index> kdtree;
+    cv::Mat featureMat;
 
 public:
     std::mutex mtx;
