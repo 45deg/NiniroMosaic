@@ -3,7 +3,6 @@
 #include <chrono>
 #include <thread>
 #include <string>
-#include "server.hpp"
 #include "image_manager.hpp"
 #include "opencv2/opencv.hpp"
 #include "cmdline.h"
@@ -67,10 +66,6 @@ int main(int argc, char * argv[])
     cv::Mat masterImage(masterSize, CV_32FC3);
     cv::Mat outputImage(cv::Size(widthTile * tileSize, heightTile * tileSize), CV_8UC3);
     ImageCollections imageCollections(args.get<std::string>("directory"), tileSize, precision); 
-
-    // run image conversion server
-    std::thread server(Server(8080, tileSize, precision), std::ref(imageCollections));
-    server.detach();
 
     GLFWwindow* window = initOpenGLWindow(outputImage.size(), "Mosaic");
 
