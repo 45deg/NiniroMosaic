@@ -1,8 +1,9 @@
 #include "server.hpp"
+#include <fstream>
+#include <algorithm>
 #include <string>
 #include <thread>
 #include <iostream>
-#include <fstream>
 #include <chrono>
 #include "zmq.hpp"
 #include "image_manager.hpp"
@@ -64,8 +65,9 @@ void Server::operator()(ImageCollections& imageCollections) {
 std::string Server::processImage(std::string inFile, ImageCollections& imageCollections) {
     cv::Mat image = cv::imread(inFile);
 
-    int widthTile = image.size().width / tileSize * 2;
-    int heightTile = image.size().height / tileSize * 2;
+    int tileLimit = 30;
+    int widthTile = std::max(tileLimit * image.size().width / image.size().height, tileLimit);
+    int heightTile = std::max(tileLimit * image.size().height / image.size().width, tileLimit);
 
     const cv::Size masterSize = cv::Size(widthTile * precision, heightTile * precision);
 
