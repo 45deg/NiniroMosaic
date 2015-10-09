@@ -23,7 +23,7 @@ GLFWwindow* initOpenGLWindow(const cv::Size size, const std::string title){
     // Initializes the GLFW library.
     glfwInit();
     // Create Window
-    GLFWwindow* window = glfwCreateWindow( size.width, size.height, title.c_str(),  glfwGetPrimaryMonitor(), nullptr );
+    GLFWwindow* window = glfwCreateWindow( size.width, size.height, title.c_str(), nullptr, nullptr );
     glfwMakeContextCurrent( window );
 
     GLuint texture;
