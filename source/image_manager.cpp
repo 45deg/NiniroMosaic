@@ -8,7 +8,6 @@
 #include <climits>
 #include <mutex>
 
-
 Tile::Tile(std::string filename, int tileSize, int presicion){
 
     image = cv::imread(filename, 1);
@@ -40,8 +39,6 @@ Tile::Tile(std::string filename, int tileSize, int presicion){
             colorInfo.at<cv::Vec3b>(i,j) = cv::Vec3b(b, g, r);
         }
     }
-
-    // std::cout << "Type:" << image.type() << ' ' << cv::format(colorInfo, "python") << std::endl;
 }
 
 ImageCollections::ImageCollections(std::string dirName, int tileSize, int presicion){
@@ -92,7 +89,7 @@ cv::Mat ImageCollections::findNearest(cv::Mat& color) {
     cv::Mat query = color.reshape(1, 1);
     cv::Mat index;
     cv::Mat dist;
-    static auto searchParams = cv::flann::SearchParams(32);
+    static auto&& searchParams = cv::flann::SearchParams(32);
     
     kdtree->knnSearch(query, index, dist, 1, searchParams);
 
