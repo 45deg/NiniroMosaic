@@ -2,10 +2,10 @@ COMPILER = g++
 CFLAGS   = --std=c++11 -MMD -MP
 CFLAGS_DEBUG   = -g -Wall -Wextra -Winit-self -Wno-unused-parameter -Wfloat-equal
 CFLAGS_RELEASE   = -O3
-LDFLAGS  = $(shell pkg-config --libs opencv) -lzmq -framework OpenGl -lglfw3
+LDFLAGS  = $(shell pkg-config --libs opencv) -lzmq -framework OpenGl -framework Cocoa -framework IOKit -framework CoreVideo -lglfw
 LIBS     = 
 INCLUDE  = -I../include $(shell pkg-config --cflags opencv)
-TARGET   = ../bin/$(shell basename `readlink -f ..`)
+TARGET   = ../bin/$(shell basename `greadlink -f ..`)
 OBJDIR   = ./obj
 ifeq "$(strip $(OBJDIR))" ""
 	OBJDIR = .
@@ -31,6 +31,6 @@ all: clean $(TARGET)
 
 clean:
 	rm -f $(OBJECTS) $(DEPENDS) $(TARGET)
-	@rmdir --ignore-fail-on-non-empty `readlink -f $(OBJDIR)`
+	@rmdir --ignore-fail-on-non-empty `greadlink -f $(OBJDIR)`
 
 -include $(DEPENDS)
