@@ -27,8 +27,8 @@ Prepare many JPEG images and put them in a directory. All the images must be the
 ```
 ./NiniroMosaic -w 60 -h 40 -p 5 -s 30 -d image3
                   ^     ^     ^    ^     ^
-                  +-----|-----|----|-----|------ Number of rows
-                        +-----|----|-----|------ Number of columns
+                  +-----|-----|----|-----|------ Number of columns
+                        +-----|----|-----|------ Number of rows
                               +----|-----|------ Resolution of image indexing (n^2)
                                    +-----|------ Size of tile images
                                          +------ Image folder
